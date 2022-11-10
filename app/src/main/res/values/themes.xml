@@ -1,0 +1,36 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="Theme.DigitalOcean" parent="Theme.Material3.Dark.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@color/black</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorOnPrimary</item>
+
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="FileSizeRadio">
+        <item name="android:layout_marginEnd">8dp</item>
+    </style>
+
+    <style name="ConstraintButtonStyle">
+        <item name="android:background">@drawable/bg_outlined</item>
+        <item name="android:backgroundTint">?colorPrimary</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+    </style>
+
+    <style name="ViewDash">
+        <item name="android:layout_width">@dimen/view_dash_width</item>
+        <item name="android:layout_height">@dimen/view_dash_height</item>
+        <item name="android:background">@drawable/bg_dash</item>
+    </style>
+</resources>

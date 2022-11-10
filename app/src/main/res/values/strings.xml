@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">DigitalOcean</string>
+    <string name="download_file">Download File</string>
+    <string name="country">Country</string>
+    <string name="server">Server</string>
+    <string name="size_10_mb">10MB</string>
+    <string name="size_100_mb">100MB</string>
+    <string name="size_1_gb">1GB</string>
+    <string name="size_5_gb">5GB</string>
+    <string name="file_downloaded">File downloaded</string>
+    <string name="time">Time</string>
+    <string name="ms">ms</string>
+    <string name="download_history">Download History</string>
+    <string name="test">Test</string>
+    <string name="loading_please_wait">Loading please wait</string>
+    <string name="no_download_history">No download history. Run some test!</string>
+    <string name="mbps">Mbps</string>
+</resources>

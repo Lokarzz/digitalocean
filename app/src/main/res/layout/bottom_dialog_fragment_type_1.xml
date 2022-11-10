@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.base.dialog.Type1BottomDialogFragment">
+
+    <data>
+
+        <variable
+            name="title"
+            type="CharSequence" />
+
+        <variable
+            name="description"
+            type="CharSequence" />
+
+        <variable
+            name="cancelText"
+            type="String" />
+
+        <variable
+            name="okText"
+            type="String" />
+
+        <variable
+            name="handler"
+            type="io.github.lokarzz.speedtest.ui.base.dialog.Type1BottomDialogFragment.Handler" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <View
+            android:id="@+id/v_dash"
+            style="@style/ViewDash"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_title"
+            style="@style/TextAppearance.AppCompat.Title"
+            show="@{title != null}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@{title}"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/v_dash"
+            tools:text="Title" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_desc"
+            show="@{description != null}"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@{description}"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            tools:text="@tools:sample/lorem" />
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="14dp"
+            android:layout_marginTop="16dp"
+            app:constraint_referenced_ids="btn_cancel,btn_ok"
+            app:flow_horizontalAlign="center"
+            app:flow_horizontalGap="32dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_desc" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_ok"
+            style="@style/ShapeAppearanceOverlay.Material3.Button"
+            show="@{okText != null}"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> handler.onPressOk()}"
+            android:text="@{okText}"
+            tools:text="Ok" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_cancel"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            show="@{cancelText != null}"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:onClick="@{() -> handler.onPressCancel()}"
+            android:text="@{cancelText}"
+            tools:text="Cancel" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
