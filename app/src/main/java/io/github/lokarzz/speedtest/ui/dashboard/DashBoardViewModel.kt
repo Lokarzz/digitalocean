@@ -67,6 +67,12 @@ class DashBoardViewModel @Inject constructor(
     fun downloadFile() {
         viewModelScope.launch {
             val fileSize = uiState.value.selectedFileSize ?: AppConstants.FileSize.SIZE_10_MB
+            when (fileSize) {
+                AppConstants.FileSize.SIZE_1_GB, AppConstants.FileSize.SIZE_5_GB -> {
+                    _uiState.update { it.copy(errorMessage = AppConstants.FileSize.Error.SIZE_NOT_SUPPORTED) }
+                    return@launch
+                }
+            }
             digitalOceanRepository.downloadFile(fileSize = fileSize).collect { state ->
                 when (state.status) {
                     UIState.Status.SUCCESS -> {
@@ -119,6 +125,12 @@ class DashBoardViewModel @Inject constructor(
             digitalOceanRepository.fetchAllHistory().collect { state ->
                 _uiState.update { it.copy(downloadHistory = state) }
             }
+        }
+    }
+
+    fun clearError() {
+        viewModelScope.launch {
+            _uiState.update { it.copy(errorMessage = null) }
         }
     }
 }

@@ -1,5 +1,6 @@
 package io.github.lokarzz.speedtest.ui.base.dialog
 
+import android.content.DialogInterface
 import android.view.ViewGroup
 import io.github.lokarzz.speedtest.databinding.BottomDialogFragmentType1Binding
 import io.github.lokarzz.speedtest.ui.base.dialog.base.BaseBottomSheetDialogFragment
@@ -37,6 +38,7 @@ class Type1BottomDialogFragment :
 
         }
     }
+
 
     private fun initFields() {
         binding.title = title

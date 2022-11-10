@@ -1,5 +1,6 @@
 package io.github.lokarzz.speedtest.ui.base.dialog.base
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +16,7 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
     val binding by lazy {
         _binding!!
     }
+    var onDismiss: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,5 +33,11 @@ abstract class BaseBottomSheetDialogFragment<T : ViewBinding> : BottomSheetDialo
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        onDismiss?.let { it() }
     }
 }

@@ -15,4 +15,6 @@
     <string name="loading_please_wait">Loading please wait</string>
     <string name="no_download_history">No download history. Run some test!</string>
     <string name="mbps">Mbps</string>
+    <string name="oops">Opps!</string>
+    <string name="file_size_not_supported">File size not supported at the moment</string>
 </resources>

@@ -8,6 +8,7 @@ import io.github.lokarzz.speedtest.constants.AppConstants
 import io.github.lokarzz.speedtest.databinding.ActivityDashboardBinding
 import io.github.lokarzz.speedtest.extensions.CoroutineExtension.observeUiState
 import io.github.lokarzz.speedtest.ui.base.BaseActivity
+import io.github.lokarzz.speedtest.ui.base.dialog.Type1BottomDialogFragment
 import io.github.lokarzz.speedtest.ui.dashboard.dialog.BottomDialogFragmentDownloadHistory
 
 @AndroidEntryPoint
@@ -35,11 +36,9 @@ class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
                 }
                 binding.rb100Mb.id -> {
                     AppConstants.FileSize.SIZE_100_MB
-
                 }
                 binding.rb1Gb.id -> {
                     AppConstants.FileSize.SIZE_1_GB
-
                 }
                 binding.rb5Gb.id -> {
                     AppConstants.FileSize.SIZE_5_GB
@@ -65,6 +64,18 @@ class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
         initDownloadData()
         initBaseUrl()
         initDownloadLoading()
+        initErrorMessage()
+    }
+
+    private fun initErrorMessage() {
+        uiState?.errorMessage ?: return
+        Type1BottomDialogFragment().also {
+            it.title = getString(R.string.oops)
+            it.description = getString(R.string.file_size_not_supported)
+            it.onDismiss = { viewModel.clearError() }
+            it.show(supportFragmentManager, "")
+        }
+
     }
 
     private fun initDownloadLoading() {

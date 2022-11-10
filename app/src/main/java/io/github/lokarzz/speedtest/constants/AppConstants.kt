@@ -19,6 +19,10 @@ object AppConstants {
         const val SIZE_100_MB = "100mb"
         const val SIZE_1_GB = "1gb"
         const val SIZE_5_GB = "5gb"
+
+        object Error {
+            const val SIZE_NOT_SUPPORTED = "size_not_supported"
+        }
     }
 
 

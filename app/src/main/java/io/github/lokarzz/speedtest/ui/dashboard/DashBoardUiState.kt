@@ -13,5 +13,5 @@ data class DashBoardUiState(
     val currentBaseUrl: String? = null,
     val selectedFileSize: String? = null,
     val downloadHistory: List<DownloadHistory>? = null,
-
+    val errorMessage: String? = null,
 )
