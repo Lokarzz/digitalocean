@@ -6,7 +6,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.lokarzz.speedtest.constants.AppConstants
 import io.github.lokarzz.speedtest.extensions.DateExtension.fetchCurrentTime
 import io.github.lokarzz.speedtest.repository.digitalocean.DigitalOceanRepository
+import io.github.lokarzz.speedtest.repository.digitalocean.remote.network.NetworkState
+import io.github.lokarzz.speedtest.repository.model.base.ApiError
 import io.github.lokarzz.speedtest.repository.model.base.UIState
+import io.github.lokarzz.speedtest.repository.model.digitalocean.download.DownloadData
 import io.github.lokarzz.speedtest.repository.model.digitalocean.history.DownloadHistory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,13 +55,15 @@ class DashBoardViewModel @Inject constructor(
     private fun saveToHistory() {
         val downloadData = uiState.value.downloadData ?: return
         val currentBaseUrl = uiState.value.currentBaseUrl ?: return
+        val torMode = uiState.value.torMode ?: return
         viewModelScope.launch {
             digitalOceanRepository.saveToHistory(
                 DownloadHistory(
                     timeFinishedInMillis = downloadData.timeFinishedInMillis,
                     fileSize = downloadData.fileSize,
                     server = currentBaseUrl,
-                    date = fetchCurrentTime()
+                    date = fetchCurrentTime(),
+                    torMode = torMode,
                 )
             )
         }
@@ -67,28 +72,28 @@ class DashBoardViewModel @Inject constructor(
     fun downloadFile() {
         viewModelScope.launch {
             val fileSize = uiState.value.selectedFileSize ?: AppConstants.FileSize.SIZE_10_MB
-            when (fileSize) {
-                AppConstants.FileSize.SIZE_1_GB, AppConstants.FileSize.SIZE_5_GB -> {
-                    _uiState.update { it.copy(errorMessage = AppConstants.FileSize.Error.SIZE_NOT_SUPPORTED) }
-                    return@launch
-                }
-            }
-            digitalOceanRepository.downloadFile(fileSize = fileSize).collect { state ->
+            digitalOceanRepository.netWorkDownloadFile(fileSize = fileSize).collect { state ->
                 when (state.status) {
-                    UIState.Status.SUCCESS -> {
+                    NetworkState.Status.DONE -> {
                         _uiState.update {
-                            it.copy(downloadData = state.data)
+                            it.copy(
+                                downloadData = DownloadData(
+                                    timeFinishedInMillis = state.timeFinishedInMillis,
+                                    fileSize = state.fileSize
+                                ),
+                                downloadLoading = false
+                            )
                         }
                         saveToHistory()
                     }
-                    UIState.Status.ERROR -> {
+                    NetworkState.Status.ERROR -> {
                         _uiState.update {
-                            it.copy(apiError = state.error)
+                            it.copy(apiError = ApiError(message = state.errMessage))
                         }
                     }
-                    UIState.Status.LOADING -> {
+                    NetworkState.Status.IN_PROGRESS -> {
                         _uiState.update {
-                            it.copy(downloadLoading = state.loadingData?.isLoading == true)
+                            it.copy(downloadLoading = true, progress = state.progress)
                         }
                     }
                     else -> {
@@ -131,6 +136,13 @@ class DashBoardViewModel @Inject constructor(
     fun clearError() {
         viewModelScope.launch {
             _uiState.update { it.copy(errorMessage = null) }
+        }
+    }
+
+    fun setTorMode(torMode: Boolean) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(torMode = torMode) }
+            digitalOceanRepository.setTorMode(torMode)
         }
     }
 }

@@ -1,5 +1,6 @@
 package io.github.lokarzz.speedtest.ui.dashboard.dialog.adapter
 
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -90,7 +91,14 @@ class RvDownloadHistoryAdapter :
 
         private fun initServer() {
             val server = data?.server ?: return
-            binding.server = server
+            val torMode = data?.torMode ?: return
+            val list = arrayListOf<String>().also {
+                it.add(server)
+                if (torMode) {
+                    it.add(context.getString(R.string.tor_mode))
+                }
+            }
+            binding.server = TextUtils.join(" • ", list)
         }
 
 

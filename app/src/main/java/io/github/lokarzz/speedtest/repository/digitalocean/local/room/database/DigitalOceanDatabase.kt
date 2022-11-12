@@ -8,7 +8,7 @@ import io.github.lokarzz.speedtest.repository.digitalocean.local.room.dao.Histor
 import io.github.lokarzz.speedtest.repository.model.digitalocean.history.DownloadHistory
 
 
-@Database(entities = [DownloadHistory::class], version = 1)
+@Database(entities = [DownloadHistory::class], version = 2)
 abstract class DigitalOceanDatabase : RoomDatabase() {
     abstract fun historyDao(): HistoryDao
 

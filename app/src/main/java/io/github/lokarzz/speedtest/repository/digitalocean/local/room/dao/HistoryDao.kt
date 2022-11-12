@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface HistoryDao {
 
-    @Query("SELECT * FROM history")
+    @Query("SELECT * FROM history ORDER BY id DESC")
     fun fetchAllHistory(): Flow<List<DownloadHistory>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)

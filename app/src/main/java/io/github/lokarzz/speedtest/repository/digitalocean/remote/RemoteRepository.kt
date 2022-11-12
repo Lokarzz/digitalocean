@@ -1,6 +1,8 @@
 package io.github.lokarzz.speedtest.repository.digitalocean.remote
 
 import io.github.lokarzz.speedtest.extensions.ApiExtension.fetchResponse
+import io.github.lokarzz.speedtest.repository.digitalocean.remote.network.DigitalOceanNetwork
+import io.github.lokarzz.speedtest.repository.digitalocean.remote.network.NetworkState
 import io.github.lokarzz.speedtest.repository.digitalocean.remote.retrofit.IDigitalOceanService
 import io.github.lokarzz.speedtest.repository.digitalocean.remote.retrofit.interceptor.BaseUrlInterceptor
 import io.github.lokarzz.speedtest.repository.model.base.LoadingData
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 class RemoteRepository @Inject constructor(
     private val iDigitalOceanService: IDigitalOceanService,
-    private val baseUrlInterceptor: BaseUrlInterceptor
+    private val baseUrlInterceptor: BaseUrlInterceptor,
+    private val digitalOceanNetwork: DigitalOceanNetwork,
 ) {
 
 
@@ -41,6 +44,10 @@ class RemoteRepository @Inject constructor(
         }.onCompletion {
             emit(UIState.loading(LoadingData(false)))
         }.flowOn(Dispatchers.IO)
+    }
+
+    suspend fun netWorkDownloadFile(fileSize: String): Flow<NetworkState> {
+        return digitalOceanNetwork.downloadFile(fileSize)
     }
 
     suspend fun fetchServers(): Flow<UIState<List<ServerData>>> {
@@ -77,6 +84,13 @@ class RemoteRepository @Inject constructor(
     suspend fun setServer(server: String) {
         withContext(Dispatchers.Default) {
             baseUrlInterceptor.setDigitalOceanServerUrl(server)
+            digitalOceanNetwork.setDigitalOceanServerUrl(server)
+        }
+    }
+
+    suspend fun setTorMode(torMode: Boolean) {
+        withContext(Dispatchers.Default) {
+            digitalOceanNetwork.connectToTorNetwork(torMode)
         }
     }
 }

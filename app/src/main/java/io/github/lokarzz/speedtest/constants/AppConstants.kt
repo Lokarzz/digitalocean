@@ -11,7 +11,7 @@ object AppConstants {
     }
 
     object DigitalOcean {
-        const val HOST = "speedtest-%s.digitalocean.com"
+        const val HOST = "http://speedtest-%s.digitalocean.com"
     }
 
     object FileSize {
@@ -23,6 +23,11 @@ object AppConstants {
         object Error {
             const val SIZE_NOT_SUPPORTED = "size_not_supported"
         }
+    }
+
+    object Tor {
+        const val CHECK_TOR_PROJECT_URL = "https://check.torproject.org/"
+        const val CONNECTED_MESSAGE = "Congratulations. This browser is configured to use Tor."
     }
 
 

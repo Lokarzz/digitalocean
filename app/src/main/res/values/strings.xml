@@ -17,4 +17,7 @@
     <string name="mbps">Mbps</string>
     <string name="oops">Opps!</string>
     <string name="file_size_not_supported">File size not supported at the moment</string>
+    <string name="tor_mode">Tor Mode</string>
+    <string name="got_tor_control_connection">Got Tor control connection</string>
+    <string name="tor_connection_loading">Tor control loading…</string>
 </resources>

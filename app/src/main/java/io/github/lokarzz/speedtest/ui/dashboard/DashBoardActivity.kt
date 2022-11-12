@@ -1,5 +1,7 @@
 package io.github.lokarzz.speedtest.ui.dashboard
 
+import android.content.*
+import android.os.IBinder
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
@@ -10,11 +12,14 @@ import io.github.lokarzz.speedtest.extensions.CoroutineExtension.observeUiState
 import io.github.lokarzz.speedtest.ui.base.BaseActivity
 import io.github.lokarzz.speedtest.ui.base.dialog.Type1BottomDialogFragment
 import io.github.lokarzz.speedtest.ui.dashboard.dialog.BottomDialogFragmentDownloadHistory
+import org.torproject.jni.TorService
+import org.torproject.jni.TorService.LocalBinder
 
 @AndroidEntryPoint
 class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
 
-    val viewModel by viewModels<DashBoardViewModel>()
+    private var status: String? = null
+    private val viewModel by viewModels<DashBoardViewModel>()
     private var uiState: DashBoardUiState? = null
 
     override fun initViewBinding(): ActivityDashboardBinding {
@@ -24,8 +29,24 @@ class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
     override fun initView() {
         observeState()
         initHandler()
+        initTorClient()
         initFileSizeDownload()
     }
+
+    private fun initTorClient() {
+        initBroadCastReceivers()
+        startTorService()
+    }
+
+    private fun initBroadCastReceivers() {
+        registerReceiver(object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                val status = intent.getStringExtra(TorService.EXTRA_STATUS)
+                binding.hasTorControl = status == TorService.STATUS_ON
+            }
+        }, IntentFilter(TorService.ACTION_STATUS))
+    }
+
 
     private fun initFileSizeDownload() {
 
@@ -65,6 +86,12 @@ class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
         initBaseUrl()
         initDownloadLoading()
         initErrorMessage()
+        initDownloadProgress()
+    }
+
+    private fun initDownloadProgress() {
+        val progress = uiState?.progress ?: return
+        binding.progress = progress
     }
 
     private fun initErrorMessage() {
@@ -118,7 +145,6 @@ class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
                 initCountryServer(position)
             }
         }
-
     }
 
     private fun initCountryServer(position: Int) {
@@ -149,15 +175,39 @@ class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
                 viewModel.downloadFile()
             }
 
+
             override fun onClickHistory() {
                 showHistoryDialog()
             }
+
+            override fun onCheckedTor(isChecked: Boolean) {
+                viewModel.setTorMode(isChecked)
+            }
         }
+    }
+
+
+    private fun startTorService() {
+        bindService(Intent(this, TorService::class.java), object : ServiceConnection {
+            override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                val torService = (service as LocalBinder).service
+                while (torService.torControlConnection == null) {
+                    try {
+                        Thread.sleep(500)
+                    } catch (e: InterruptedException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+
+            override fun onServiceDisconnected(name: ComponentName) {}
+        }, BIND_AUTO_CREATE)
     }
 
 
     interface Handler {
         fun onClickDownload()
         fun onClickHistory()
+        fun onCheckedTor(isChecked: Boolean)
     }
 }

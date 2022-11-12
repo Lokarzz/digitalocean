@@ -10,4 +10,5 @@ data class DownloadHistory(
     var fileSize: String? = null,
     var server: String? = null,
     var date: String? = null,
+    var torMode: Boolean? = null
 )
