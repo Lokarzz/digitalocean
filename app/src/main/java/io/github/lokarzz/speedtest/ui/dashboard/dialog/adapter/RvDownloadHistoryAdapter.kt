@@ -95,7 +95,7 @@ class RvDownloadHistoryAdapter :
             val list = arrayListOf<String>().also {
                 it.add(server)
                 if (torMode) {
-                    it.add(context.getString(R.string.tor_mode))
+                    it.add(context.getString(R.string.another_network))
                 }
             }
             binding.server = TextUtils.join(" • ", list)

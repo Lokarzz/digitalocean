@@ -20,4 +20,6 @@
     <string name="tor_mode">Tor Mode</string>
     <string name="got_tor_control_connection">Got Tor control connection</string>
     <string name="tor_connection_loading">Tor control loading…</string>
+    <string name="use_another_network">Use another network</string>
+    <string name="another_network">Another network</string>
 </resources>

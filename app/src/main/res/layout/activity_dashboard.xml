@@ -78,6 +78,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/got_tor_control_connection"
                 app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/tv_base_url" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -167,7 +168,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onCheckedChanged="@{(_, checked) -> handler.onCheckedTor(checked)}"
-                android:text="@string/tor_mode"
+                android:text="@string/use_another_network"
                 enable="@{hasTorControl &amp;&amp; !isLoading}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/rg_file_size" />
