@@ -18,7 +18,6 @@ import org.torproject.jni.TorService.LocalBinder
 @AndroidEntryPoint
 class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
 
-    private var status: String? = null
     private val viewModel by viewModels<DashBoardViewModel>()
     private var uiState: DashBoardUiState? = null
 
