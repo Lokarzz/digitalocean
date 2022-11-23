@@ -6,6 +6,7 @@ data class NetworkState(
     var timeFinishedInMillis: Long? = null,
     var fileSize: String? = null,
     var errMessage: String? = null,
+    var throwable: Throwable? = null
 ) {
     enum class Status {
         DONE, IN_PROGRESS, ERROR
@@ -28,10 +29,12 @@ data class NetworkState(
             )
         }
 
-        fun error(errMessage: String?): NetworkState {
+        fun error(throwable: Throwable, fileSize: String): NetworkState {
             return NetworkState(
                 status = Status.ERROR,
-                errMessage = errMessage,
+                errMessage = throwable.message,
+                throwable = throwable,
+                fileSize = fileSize
             )
         }
 

@@ -22,4 +22,6 @@
     <string name="tor_connection_loading">Tor control loading…</string>
     <string name="use_another_network">Use another network</string>
     <string name="another_network">Another network</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="unkown_issue">Unkown Issue</string>
 </resources>

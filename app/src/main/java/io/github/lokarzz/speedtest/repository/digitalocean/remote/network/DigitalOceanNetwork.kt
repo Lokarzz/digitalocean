@@ -1,6 +1,5 @@
 package io.github.lokarzz.speedtest.repository.digitalocean.remote.network
 
-import io.github.lokarzz.speedtest.BuildConfig
 import io.github.lokarzz.speedtest.constants.AppConstants
 import io.github.lokarzz.speedtest.repository.digitalocean.remote.network.helper.TorHelper
 import kotlinx.coroutines.Dispatchers
@@ -49,18 +48,18 @@ class DigitalOceanNetwork @Inject constructor(private val torHelper: TorHelper) 
                         )
                     )
                 }
-            } catch (e: Exception) {
+                emit(
+                    NetworkState.done(
+                        timeFinishedInMillis = System.currentTimeMillis() - startTime,
+                        fileSize = fileSize
+                    )
+                )
+            }catch (e : Exception){
                 // do nothing
             }
 
-            emit(
-                NetworkState.done(
-                    timeFinishedInMillis = System.currentTimeMillis() - startTime,
-                    fileSize = fileSize
-                )
-            )
         }.catch {
-            emit(NetworkState.error(errMessage = it.message))
+            emit(NetworkState.error(throwable = it, fileSize = fileSize))
         }.flowOn(Dispatchers.IO)
     }
 

@@ -9,6 +9,7 @@ import io.github.lokarzz.speedtest.R
 import io.github.lokarzz.speedtest.constants.AppConstants
 import io.github.lokarzz.speedtest.databinding.ActivityDashboardBinding
 import io.github.lokarzz.speedtest.extensions.CoroutineExtension.observeUiState
+import io.github.lokarzz.speedtest.repository.model.base.ApiError
 import io.github.lokarzz.speedtest.ui.base.BaseActivity
 import io.github.lokarzz.speedtest.ui.base.dialog.Type1BottomDialogFragment
 import io.github.lokarzz.speedtest.ui.dashboard.dialog.BottomDialogFragmentDownloadHistory
@@ -94,10 +95,20 @@ class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
     }
 
     private fun initErrorMessage() {
-        uiState?.errorMessage ?: return
+        val apiError = uiState?.apiError ?: return
+
+        val message = when (apiError.status) {
+            ApiError.Status.NO_NETWORK -> {
+                getString(R.string.no_internet_connection)
+            }
+            else -> {
+                getString(R.string.unkown_issue)
+            }
+        }
+
         Type1BottomDialogFragment().also {
             it.title = getString(R.string.oops)
-            it.description = getString(R.string.file_size_not_supported)
+            it.description = message
             it.onDismiss = { viewModel.clearError() }
             it.show(supportFragmentManager, "")
         }
@@ -122,9 +133,10 @@ class DashBoardActivity : BaseActivity<ActivityDashboardBinding>() {
             String.format(
                 "%s: %s%s",
                 getString(R.string.time),
-                downloadData.timeFinishedInMillis,
+                downloadData.timeFinishedInMillis ?: 0,
                 getString(R.string.ms),
             )
+
         binding.downloadResult = String.format("%s\n%s", downloadedFile, timeFinished)
     }
 

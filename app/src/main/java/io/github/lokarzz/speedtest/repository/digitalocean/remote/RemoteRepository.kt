@@ -21,31 +21,6 @@ class RemoteRepository @Inject constructor(
 ) {
 
 
-    suspend fun downloadFile(fileSize: String): Flow<UIState<DownloadData>> {
-        return flow {
-            val startTime = System.currentTimeMillis()
-            val remoteState =
-                fetchResponse { iDigitalOceanService.downloadFile(fileSize = fileSize) }
-            if (remoteState.status != UIState.Status.SUCCESS) {
-                emit(UIState.error(remoteState.error))
-            } else {
-                emit(
-                    UIState.success(
-                        DownloadData(
-                            fileSize = fileSize,
-                            timeFinishedInMillis = System.currentTimeMillis() - startTime
-                        )
-                    )
-                )
-            }
-
-        }.onStart {
-            emit(UIState.loading(LoadingData(true)))
-        }.onCompletion {
-            emit(UIState.loading(LoadingData(false)))
-        }.flowOn(Dispatchers.IO)
-    }
-
     suspend fun netWorkDownloadFile(fileSize: String): Flow<NetworkState> {
         return digitalOceanNetwork.downloadFile(fileSize)
     }

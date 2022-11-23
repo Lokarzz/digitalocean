@@ -10,6 +10,7 @@ import io.github.lokarzz.speedtest.R
 import io.github.lokarzz.speedtest.constants.AppConstants
 import io.github.lokarzz.speedtest.databinding.ItemDownloadHistoryBinding
 import io.github.lokarzz.speedtest.extensions.DateExtension.toDateFormat
+import io.github.lokarzz.speedtest.repository.model.base.ApiError
 import io.github.lokarzz.speedtest.repository.model.digitalocean.history.DownloadHistory
 import java.util.concurrent.TimeUnit
 
@@ -83,7 +84,7 @@ class RvDownloadHistoryAdapter :
         }
 
         private fun initTimeDownloaded() {
-            val timeFinishedInMillis = data?.timeFinishedInMillis ?: return
+            val timeFinishedInMillis = data?.timeFinishedInMillis ?: 0L
             binding.timeDownloaded =
                 String.format("%s%s", timeFinishedInMillis, context.getString(R.string.ms))
         }
@@ -92,10 +93,22 @@ class RvDownloadHistoryAdapter :
         private fun initServer() {
             val server = data?.server ?: return
             val torMode = data?.torMode ?: return
+            val isSuccess = data?.isSuccess ?: return
             val list = arrayListOf<String>().also {
                 it.add(server)
                 if (torMode) {
                     it.add(context.getString(R.string.another_network))
+                }
+                if (!isSuccess) {
+                    val message = when (data?.errorType) {
+                        ApiError.Status.NO_NETWORK.name -> {
+                            context.getString(R.string.no_internet_connection)
+                        }
+                        else -> {
+                            context.getString(R.string.unkown_issue)
+                        }
+                    }
+                    it.add(message)
                 }
             }
             binding.server = TextUtils.join(" • ", list)

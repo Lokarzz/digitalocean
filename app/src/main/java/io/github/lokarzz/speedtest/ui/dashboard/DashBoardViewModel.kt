@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,7 +56,7 @@ class DashBoardViewModel @Inject constructor(
     private fun saveToHistory() {
         val downloadData = uiState.value.downloadData ?: return
         val currentBaseUrl = uiState.value.currentBaseUrl ?: return
-        val torMode = uiState.value.torMode ?: return
+        val torMode = uiState.value.torMode ?: false
         viewModelScope.launch {
             digitalOceanRepository.saveToHistory(
                 DownloadHistory(
@@ -64,6 +65,26 @@ class DashBoardViewModel @Inject constructor(
                     server = currentBaseUrl,
                     date = fetchCurrentTime(),
                     torMode = torMode,
+                )
+            )
+        }
+    }
+
+
+    private fun saveFailedToHistory() {
+        val downloadData = uiState.value.downloadData ?: return
+        val currentBaseUrl = uiState.value.currentBaseUrl ?: return
+        val apiErrorStatusName = uiState.value.apiError?.status?.name ?: return
+        val torMode = uiState.value.torMode ?: false
+        viewModelScope.launch {
+            digitalOceanRepository.saveToHistory(
+                DownloadHistory(
+                    fileSize = downloadData.fileSize,
+                    server = currentBaseUrl,
+                    date = fetchCurrentTime(),
+                    torMode = torMode,
+                    isSuccess = false,
+                    errorType = apiErrorStatusName
                 )
             )
         }
@@ -88,8 +109,25 @@ class DashBoardViewModel @Inject constructor(
                     }
                     NetworkState.Status.ERROR -> {
                         _uiState.update {
-                            it.copy(apiError = ApiError(message = state.errMessage))
+                            it.copy(
+                                apiError = ApiError(
+                                    message = state.errMessage,
+                                    status = when (state.throwable) {
+                                        is UnknownHostException -> {
+                                            ApiError.Status.NO_NETWORK
+                                        }
+                                        else -> {
+                                            ApiError.Status.UNKNOWN
+                                        }
+                                    }
+                                ),
+                                downloadLoading = false,
+                                downloadData = DownloadData(
+                                    fileSize = state.fileSize
+                                ),
+                            )
                         }
+                        saveFailedToHistory()
                     }
                     NetworkState.Status.IN_PROGRESS -> {
                         _uiState.update {
@@ -135,7 +173,7 @@ class DashBoardViewModel @Inject constructor(
 
     fun clearError() {
         viewModelScope.launch {
-            _uiState.update { it.copy(errorMessage = null) }
+            _uiState.update { it.copy(errorMessage = null, apiError = null) }
         }
     }
 

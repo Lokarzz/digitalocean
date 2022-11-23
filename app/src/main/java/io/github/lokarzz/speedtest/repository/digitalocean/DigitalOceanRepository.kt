@@ -17,10 +17,6 @@ class DigitalOceanRepository @Inject constructor(
     private val localRepository: LocalRepository
 ) {
 
-    suspend fun downloadFile(fileSize: String): Flow<UIState<DownloadData>> {
-        return remoteRepository.downloadFile(fileSize = fileSize)
-    }
-
     suspend fun netWorkDownloadFile(fileSize: String): Flow<NetworkState> {
         return remoteRepository.netWorkDownloadFile(fileSize = fileSize)
     }
